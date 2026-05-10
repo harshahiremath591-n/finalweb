@@ -1,0 +1,153 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="card">
+
+    <div style="width:100%;">
+
+        <h1 style="margin-bottom:20px;">
+            📊 Reports Dashboard
+        </h1>
+
+        <!-- FILTER BUTTONS -->
+
+        <div class="grid" style="margin-bottom:30px;">
+
+             <a href="{{ url_for('daily') }}" class="report-btn">
+                 📅 Daily
+             </a>
+
+             <a href="{{ url_for('weekly') }}" class="report-btn">
+                 📊 Weekly
+             </a>
+
+             <a href="{{ url_for('monthly') }}" class="report-btn">
+                 📈 Monthly
+             </a>
+
+         </div>
+
+        <!-- FILTER TITLE -->
+
+        {% if filter_type %}
+
+        <div class="alert">
+            Showing {{ filter_type }} Reports
+        </div>
+
+        {% endif %}
+
+        <!-- REPORT TABLE -->
+
+        <div class="table-container">
+
+            <table>
+
+                <tr>
+
+                    <th>#</th>
+                    <th>Task</th>
+                    <th>Status</th>
+                    <th>Assigned To</th>
+                    <th>Created</th>
+                    <th>Completed</th>
+                    <th>Report</th>
+
+                </tr>
+
+                {% for t in tasks %}
+
+                <tr>
+
+                    <td>{{ loop.index }}</td>
+
+                    <td>{{ t.title }}</td>
+
+                    <td>
+
+                        {% if t.status == 'Completed' %}
+
+                            <span class="completed">
+                                ✅ Completed
+                            </span>
+
+                        {% elif t.status == 'Processing' %}
+
+                            <span class="processing">
+                                🔄 Processing
+                            </span>
+
+                        {% else %}
+
+                            <span class="pending">
+                                ⏳ Pending
+                            </span>
+
+                        {% endif %}
+
+                    </td>
+
+                    <td>
+
+                        {% if t.user %}
+                            {{ t.user.username }}
+                        {% else %}
+                            No User
+                        {% endif %}
+
+                    </td>
+
+                    <td>
+
+                        {% if t.created_at %}
+                            {{ t.created_at.strftime('%d-%m-%Y') }}
+                        {% else %}
+                            -
+                        {% endif %}
+
+                    </td>
+
+                    <td>
+
+                        {% if t.completed_at %}
+                            {{ t.completed_at.strftime('%d-%m-%Y') }}
+                        {% else %}
+                            -
+                        {% endif %}
+
+                    </td>
+
+                    <td>
+
+                        {% if t.report %}
+
+                        <a
+                            href="/static/uploads/{{ t.report }}"
+                            target="_blank"
+                            class="report-link"
+                        >
+                            📄 View
+                        </a>
+
+                        {% else %}
+
+                        No Report
+
+                        {% endif %}
+
+                    </td>
+
+                </tr>
+
+                {% endfor %}
+
+            </table>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

@@ -1,0 +1,577 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<h1 style="margin-bottom:25px;">
+⚡ Dashboard
+</h1>
+
+<!-- ================= PROFILE ================= -->
+
+<div class="card profile-card-dashboard">
+
+<div style="width:100%; text-align:center;">
+
+{% if user and user.profile_pic %}
+
+<img
+src="data:image/png;base64,{{ user.profile_pic }}"
+class="profile-big"
+>
+
+{% else %}
+
+<img
+src="https://cdn-icons-png.flaticon.com/512/149/149071.png"
+class="profile-big"
+>
+
+{% endif %}
+
+<h2 style="margin-top:15px;">
+{{ session.get('username') }}
+</h2>
+
+<p>
+
+Role :
+
+<b style="color:#38bdf8;">
+{{ session.get('role') }}
+</b>
+
+</p>
+
+</div>
+
+</div>
+
+<!-- ================= GPS LOCATION ================= -->
+
+<div class="card">
+
+<div style="width:100%;">
+
+<h2>
+📍 Live Location
+</h2>
+
+<p id="locationText">
+Detecting Location...
+</p>
+
+</div>
+
+</div>
+
+<!-- ================================================= -->
+<!-- ================= ADMIN DASHBOARD =============== -->
+<!-- ================================================= -->
+
+{% if session.get('role') == 'admin' %}
+
+<!-- ================= STATS ================= -->
+
+<div class="grid">
+
+<div class="card stat-card">
+
+<h3>✅ Completed</h3>
+
+<h1>{{ completed }}</h1>
+
+</div>
+
+<div class="card stat-card">
+
+<h3>⏳ Pending</h3>
+
+<h1>{{ pending }}</h1>
+
+</div>
+
+<div class="card stat-card">
+
+<h3>🔄 Processing</h3>
+
+<h1>{{ processing }}</h1>
+
+</div>
+
+<div class="card stat-card">
+
+<h3>👷 Electricians</h3>
+
+<h1>{{ total_users }}</h1>
+
+</div>
+
+</div>
+
+<!-- ================= ANALYTICS ================= -->
+
+<div class="card">
+
+<div style="width:100%;">
+
+<h2 style="margin-bottom:20px;">
+📊 Live Analytics
+</h2>
+
+<canvas id="chart"></canvas>
+
+</div>
+
+</div>
+
+<script>
+
+const ctx = document.getElementById('chart');
+
+new Chart(ctx, {
+
+type: 'doughnut',
+
+data: {
+
+labels: [
+
+'Completed',
+
+'Pending',
+
+'Processing'
+
+],
+
+datasets: [{
+
+label: 'Tasks',
+
+data: [
+
+{{ completed }},
+
+{{ pending }},
+
+{{ processing }}
+
+],
+
+backgroundColor: [
+
+'#22c55e',
+
+'#f59e0b',
+
+'#3b82f6'
+
+],
+
+borderWidth: 2
+
+}]
+
+},
+
+options: {
+
+responsive: true,
+
+plugins: {
+
+legend: {
+
+labels: {
+
+color: 'white'
+
+}
+
+}
+
+}
+
+}
+
+});
+
+</script>
+
+<!-- ================= QUICK CONTROLS ================= -->
+
+<div class="card">
+
+<div style="width:100%;">
+
+<h2 style="margin-bottom:20px;">
+🛠 Admin Controls
+</h2>
+
+<div class="grid">
+
+<a href="/add_task">
+<button>➕ Assign Task</button>
+</a>
+
+<a href="/jobs">
+<button>🏗 Jobs</button>
+</a>
+
+<a href="/materials">
+<button>📦 Materials</button>
+</a>
+
+<a href="/electricians">
+<button>👷 Electricians</button>
+</a>
+
+<a href="/payments">
+<button>💳 Payments</button>
+</a>
+
+<a href="/transactions">
+<button>📜 Transactions</button>
+</a>
+
+<a href="/reports">
+<button>📊 Reports</button>
+</a>
+
+<a href="/attendance">
+<button>👷 Attendance</button>
+</a>
+
+<a href="/location">
+<button>📍 GPS Tracking</button>
+</a>
+
+<a href="/material_usage">
+<button>📦 Material Usage</button>
+</a>
+
+</div>
+
+</div>
+
+</div>
+
+<!-- ================= TASK HISTORY ================= -->
+
+<div class="card">
+
+<div style="width:100%;">
+
+<h2 style="margin-bottom:20px;">
+📋 Task History
+</h2>
+
+{% if tasks %}
+
+<div class="table-container">
+
+<table>
+
+<tr>
+
+<th>#</th>
+<th>Task</th>
+<th>Status</th>
+<th>Created</th>
+<th>Completed</th>
+<th>Report</th>
+<th>Delete</th>
+
+</tr>
+
+{% for t in tasks %}
+
+<tr>
+
+<td>{{ loop.index }}</td>
+
+<td>{{ t.title }}</td>
+
+<td>
+
+{% if t.status == 'Completed' %}
+
+<span class="completed">
+✅ Completed
+</span>
+
+{% elif t.status == 'Processing' %}
+
+<span class="processing">
+🔄 Processing
+</span>
+
+{% else %}
+
+<span class="pending">
+⏳ Pending
+</span>
+
+{% endif %}
+
+</td>
+
+<td>
+
+{% if t.created_at %}
+
+{{ t.created_at.strftime('%d-%m-%Y') }}
+
+{% else %}
+
+-
+
+{% endif %}
+
+</td>
+
+<td>
+
+{% if t.completed_at %}
+
+{{ t.completed_at.strftime('%d-%m-%Y') }}
+
+{% else %}
+
+-
+
+{% endif %}
+
+</td>
+
+<td>
+
+{% if t.report %}
+
+<a
+href="/static/uploads/{{ t.report }}"
+target="_blank"
+class="report-link"
+>
+📄 View
+</a>
+
+{% else %}
+
+No Report
+
+{% endif %}
+
+</td>
+
+<td>
+
+<a href="/delete_task/{{ t.id }}">
+
+<button class="delete-btn">
+🗑 Delete
+</button>
+
+</a>
+
+</td>
+
+</tr>
+
+{% endfor %}
+
+</table>
+
+</div>
+
+{% else %}
+
+<div class="alert">
+
+No tasks found.
+
+</div>
+
+{% endif %}
+
+</div>
+
+</div>
+
+{% endif %}
+
+<!-- ================================================= -->
+<!-- ============ ELECTRICIAN DASHBOARD ============== -->
+<!-- ================================================= -->
+
+{% if session.get('role') == 'electrician' %}
+
+<div class="card">
+
+<div style="width:100%;">
+
+<h2 style="margin-bottom:20px;">
+🧰 My Tasks
+</h2>
+
+{% if tasks %}
+
+{% for t in tasks %}
+
+<div class="card" style="margin-bottom:20px;">
+
+<div style="width:100%;">
+
+<h3>
+{{ loop.index }}. {{ t.title }}
+</h3>
+
+<p>
+
+Status :
+
+{% if t.status == 'Completed' %}
+
+<b style="color:lime;">
+✅ Completed
+</b>
+
+{% elif t.status == 'Processing' %}
+
+<b style="color:skyblue;">
+🔄 Processing
+</b>
+
+{% else %}
+
+<b style="color:orange;">
+⏳ Pending
+</b>
+
+{% endif %}
+
+</p>
+
+<form
+method="POST"
+action="/update/{{ t.id }}"
+enctype="multipart/form-data"
+>
+
+<select name="status" required>
+
+<option value="">
+Select Status
+</option>
+
+<option value="Pending">
+Pending
+</option>
+
+<option value="Processing">
+Processing
+</option>
+
+<option value="Completed">
+Completed
+</option>
+
+</select>
+
+<br><br>
+
+<input
+type="file"
+name="report"
+>
+
+<br><br>
+
+<button type="submit">
+
+✅ Update Task
+
+</button>
+
+</form>
+
+{% if t.report %}
+
+<br>
+
+<a
+href="/static/uploads/{{ t.report }}"
+target="_blank"
+class="report-link"
+>
+📄 View Report
+</a>
+
+{% endif %}
+
+</div>
+
+</div>
+
+{% endfor %}
+
+{% else %}
+
+<div class="alert">
+
+No Tasks Assigned
+
+</div>
+
+{% endif %}
+
+</div>
+
+</div>
+
+{% endif %}
+
+<!-- ================= GPS SCRIPT ================= -->
+
+<script>
+
+  <!-- GPS TEMP DISABLED -->
+
+(position) => {
+
+document.getElementById("locationText").innerHTML =
+
+"Latitude : " +
+
+position.coords.latitude +
+
+"<br>Longitude : " +
+
+position.coords.longitude;
+
+},
+
+(error) => {
+
+document.getElementById("locationText").innerHTML =
+
+"❌ Location Permission Denied";
+
+}
+
+);
+
+</script>
+
+<!-- ================= AUTO REFRESH ================= -->
+
+<script>
+
+setInterval(() => {
+
+    location.reload();
+
+}, 6000000);
+
+</script>
+
+{% endblock %}

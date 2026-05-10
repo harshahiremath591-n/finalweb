@@ -1,0 +1,134 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<h1 style="margin-bottom:20px;">
+⚡ Electricians
+</h1>
+
+<div class="grid">
+
+{% for u in users %}
+
+<div class="card electrician-card">
+
+    <!-- PROFILE IMAGE -->
+
+    {% if u.profile_pic %}
+
+    <img
+        src="data:image/png;base64,{{ u.profile_pic }}"
+        class="electrician-big-img"
+    >
+
+    {% else %}
+
+    <img
+        src="https://cdn-icons-png.flaticon.com/512/149/149071.png"
+        class="electrician-big-img"
+    >
+
+    {% endif %}
+
+    <!-- USER INFO -->
+
+    <div class="electrician-info">
+
+        <h2>{{ u.username }}</h2>
+
+        <p>
+            👷 Role :
+            <b>{{ u.role }}</b>
+        </p>
+
+        <p>
+            🆔 User ID :
+            {{ u.id }}
+        </p>
+
+        <!-- TOTAL TASKS -->
+
+        <p>
+            📋 Tasks :
+            {{ u.tasks|length if u.tasks else 0 }}
+        </p>
+
+        <!-- REPORTS -->
+
+        <div style="margin-top:15px;">
+
+            <h3>📄 Reports</h3>
+
+            {% set has_report = false %}
+
+            {% for t in u.tasks %}
+
+                {% if t.report %}
+
+                    {% set has_report = true %}
+
+                    <a
+                        href="/static/uploads/{{ t.report }}"
+                        target="_blank"
+                        class="report-link"
+                    >
+                        📄 {{ t.title }}
+                    </a>
+
+                    <br><br>
+
+                {% endif %}
+
+            {% endfor %}
+
+            {% if not has_report %}
+                No Reports
+            {% endif %}
+
+        </div>
+
+        <!-- ACTION BUTTONS -->
+
+        <div
+            style="
+                margin-top:20px;
+                display:flex;
+                gap:10px;
+                flex-wrap:wrap;
+            "
+        >
+
+            <a href="/edit_user/{{ u.id }}">
+
+                <button class="edit-btn">
+                    ✏ Edit
+                </button>
+
+            </a>
+
+            <a href="/delete_user/{{ u.id }}">
+
+                <button class="delete-btn">
+                    🗑 Delete
+                </button>
+
+            </a>
+
+            <a href="/pay_electrician/{{ u.id }}">
+
+                <button class="salary-btn">
+                    💳 Pay
+                </button>
+
+            </a>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endfor %}
+
+</div>
+
+{% endblock %}
