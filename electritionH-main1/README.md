@@ -84,8 +84,8 @@ Fill:
 
 | Field    | Example  |
 | -------- | -------- |
-| Username | admin    |  #Any name
-| Password | admin123 |  #Any password
+| Username | Harsha   |  #Any name
+| Password | 1234     |  #Any password
 | Role     | admin    |
 
 Click Register.
@@ -104,8 +104,8 @@ Enter:
 
 | Field    | Example  |
 | -------- | -------- |
-| Username | admin    |
-| Password | admin123 |
+| Username | Harsha  |
+| Password | 1234    |
 
 ---
 
@@ -169,8 +169,8 @@ Open:
 
 | Field    | Example     |
 | -------- | ----------- |
-| Username | Ravi        |
-| Password | ravi123     |
+| Username | Elec     |
+| Password | 1234     |
 | Role     | electrician |
 
 ---
@@ -186,7 +186,7 @@ Open:
 | Field       | Example      |
 | ----------- | ------------ |
 | Task Title  | Main Wiring  |
-| Electrician | Ravi         |
+| Electrician | Elec       |
 | Job         | House Wiring |
 
 ---
@@ -216,7 +216,7 @@ Open:
 
 | Field         | Example |
 | ------------- | ------- |
-| Electrician   | Ravi    |
+| Electrician   | Elec  |
 | Material      | Wire    |
 | Quantity Used | 10      |
 
@@ -348,8 +348,8 @@ Open:
 
 | Field    | Example |
 | -------- | ------- |
-| Username | Ravi    |
-| Password | ravi123 |
+| Username | Harsha   |
+| Password | 1234    |
 
 ---
 
@@ -527,6 +527,10 @@ python app.py
 | 🔐 OTP Login            | Advanced security     |
 
 ---
+
+# Hear i cutted the location,Graph of all connectivity beacause Render goes slow working 
+
+Thankyou
 
 # 👨‍💻 DEVELOPED BY
 
