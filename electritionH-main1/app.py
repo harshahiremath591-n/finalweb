@@ -26,11 +26,21 @@ import shutil
 
 app = Flask(__name__)
 
+socketio = SocketIO(app)
+
 app.secret_key = "harsha_secret"
 
 app.config.from_object(Config)
 
-app.permanent_session_lifetime = timedelta(minutes=10)
+# ================= SESSION SECURITY =================
+
+app.config['SESSION_COOKIE_NAME'] = 'electrician_session'
+
+app.config['SESSION_COOKIE_HTTPONLY'] = True
+
+app.config['SESSION_COOKIE_SAMESITE'] = 'Lax'
+
+app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(days=3650)
 
 
 
@@ -65,6 +75,15 @@ def login_required(f):
 
     return wrapper
 
+    # ================= AUTO SESSION REFRESH =================
+
+@app.before_request
+def make_session_permanent():
+
+    session.permanent = True
+
+    session.modified = True
+
 # ================= HOME =================
 
 @app.route('/')
@@ -94,11 +113,17 @@ def login():
 
             session.clear()
 
-            session.permanent = True
+# ================= PERMANENT LOGIN =================
 
-            session['user_id'] = user.id
-            session['role'] = user.role
-            session['username'] = user.username
+         session.permanent = True
+
+         session['user_id'] = user.id
+
+         session['role'] = user.role
+
+         session['username'] = user.username
+
+         session.modified = True
 
             flash("✅ Login Successful")
 
