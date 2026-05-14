@@ -125,11 +125,11 @@ def login():
 
          session.modified = True
 
-            flash("✅ Login Successful")
+         flash("✅ Login Successful")
 
-            return redirect('/dashboard')
+         return redirect('/dashboard')
 
-        flash("❌ Invalid Login")
+         flash("❌ Invalid Login")
 
     return render_template('login.html')
 
